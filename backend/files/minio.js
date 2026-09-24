@@ -1,3 +1,4 @@
+//Defines the minio server configuration for client connection.
 import * as Minio from "minio";
 import { configDotenv } from "dotenv";
 configDotenv();
