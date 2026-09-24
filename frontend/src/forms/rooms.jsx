@@ -1,10 +1,11 @@
 import { useEffect } from "react";
 import Cardimage from "../components/cards";
 import { useState } from "react";
-import { Spinner, Table } from "@radix-ui/themes";
+import { Card, Spinner, Table } from "@radix-ui/themes";
 import { Text } from "@radix-ui/themes";
 import axios_client from "../axios/axios";
-import Button from "../components/button";
+import { Button } from "@radix-ui/themes";
+import { Skeleton } from "@radix-ui/themes";
 function Home(){
     const[loading,setloading]=useState(true);
     const [value,setvalue]=useState([]);
@@ -23,7 +24,9 @@ function Home(){
     if(loading){
     return(
     <div>
-            <Spinner></Spinner>
+            <Skeleton>
+                <Card size={"5"}></Card>
+            </Skeleton>
     </div>
     )
 }else{
