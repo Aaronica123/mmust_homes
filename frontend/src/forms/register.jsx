@@ -16,7 +16,18 @@ function Register_Form() {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   const markerRef = useRef(null);
-
+  const[coord,setcoord]=useState({lat:"",long:""})
+  const [data,setdata]=useState({house_location:"",house_name:"",house_rooms:"",house_available:"",
+    house_coordinates:{lat:0,long:0},
+    house_type:"",user_id:""})
+  
+  const datachange=(e)=>{
+    const{name,value}=e.target
+    setdata((data)=>({
+      ...data,
+      [name]:value
+    }))
+  }
   const image_change = (e) => {
     const value = e.target.files;
     setimage({ input: value });
@@ -64,6 +75,8 @@ function Register_Form() {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         };
+        data.house_coordinates.lat=position.coords.latitude
+        data.house_coordinates.long=position.coords.longitude
         // Keep raw accuracy value without integer conversion or halving
         const accuracy = position.coords.accuracy;
 
@@ -109,21 +122,22 @@ function Register_Form() {
       Frm.append("images", image.input[count]);
     }
 
-    // Capture current map center coordinates for submission
-    const currentCenter = mapRef.current ? mapRef.current.getCenter() : null;
-    const lat = currentCenter ? currentCenter.lat() : -1.286389;
-    const long = currentCenter ? currentCenter.lng() : 36.817223;
-
-    Frm.append(
+    navigator.geolocation.getCurrentPosition(async(values)=>{
+      setcoord({lat:values.coords.latitude,long:values.coords.longitude})
+       Frm.append(
       "body",
       JSON.stringify({
-        house_location: { lat, long },
-        house_name: "Test home",
-        id: 100,
+        house_coordinates: coord,
+        house_name: data.house_name,
+        user_id: data.user_id,
+        house_location:data.house_location,
+        house_available:data.house_available,
+        house_rooms:data.house_rooms,
+        house_type:data.house_type
       })
     );
-
-    try {
+     try {
+      console.log(Frm.get("body"));
       const { data, status } = await axios_client.post("/api/register_house", Frm);
       if (status === 200) {
         console.log("Successfully uploaded image", data);
@@ -133,6 +147,16 @@ function Register_Form() {
     } catch (error) {
       console.error("Upload error:", error);
     }
+    })
+    
+    // Capture current map center coordinates for submission
+    console.log(coord)
+    // const currentCenter = mapRef.current ? mapRef.current.getCenter() : null;
+    // const lat = currentCenter ? currentCenter.lat() : -1.286389;
+    // const long = currentCenter ? currentCenter.lng() : 36.817223;
+   
+
+   
   };
 
   return (
@@ -145,6 +169,25 @@ function Register_Form() {
           placeholder="enter a file"
           onChange={image_change}
         />
+        <label>House Name</label>
+        <input type="text" placeholder="enter house name" name="house_name" value={data.house_name} onChange={datachange}/>
+        <label>House Type</label>
+        <select  name="house_type" onChange={datachange}>
+          <option  value={"bedroom"}>bedroom</option>
+          <option  value={"bedsitter"}>bedsitter</option>
+          <option  value={"single"}>single</option>
+        </select>
+        <label>Room type</label>
+        {data.house_type=="single"?
+        <input disabled placeholder="cannot enter room type"></input>
+        :
+        <input type="text" placeholder="enter room type" value={data.house_rooms} name="house_rooms" onChange={datachange}></input>}
+        <label>User id</label>
+        <input type="number" value={data.user_id} name="user_id" onChange={datachange}/>
+        <label>House Location</label>
+        <input type="text" name="house_location" value={data.house_location} placeholder="enter house location" onChange={datachange}/>
+        <label>Rooms Available</label>
+        <input type="number" name="house_available" value={data.house_available} onChange={datachange} placeholder="enter available houses"/>
         <button type="button" onClick={submit}>
           Submit
         </button>

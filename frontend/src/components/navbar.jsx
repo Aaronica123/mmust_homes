@@ -1,10 +1,12 @@
 import { useState } from "react"
-import {BoxIcon, DoorClosed, ScanBarcode}from "lucide-react";
+import {BoxIcon, DoorClosed, LayoutDashboard, ScanBarcode,Menu, ShoppingCart, ShoppingCartPlus, ShoppingCartPlusIcon}from "lucide-react";
 import { LogOut } from "lucide-react";
-import { Avatar, Text } from "@radix-ui/themes";
+import { Avatar, Button, Card, Text } from "@radix-ui/themes";
+
 import { X } from "lucide-react";
 export default function NavBar({children}){
     const [nav,setnav]=useState(true);
+    const[btn,setbtn]=useState({btn1:true})
     const handle_nav=()=>{
         setnav(!nav)
     }
@@ -42,17 +44,30 @@ return(
         <Avatar fallback="MN"></Avatar>
         <X onClick={handle_nav}></X>
         </div>
+        <div style={{width:"100%",height:"100%",display:"flex",flexDirection:"column",padding:"5px"}}>
+        <Text>Main</Text>
+        <div onClick={()=>{setbtn({btn1:true}),setnav(false)}} className="crd"style={{width:"100%",height:"fit-content",whiteSpace:"nowrap",
+        padding:"10px",borderRadius:"10px",
+            display:"flex",flexDirection:"row",cursor:"pointer",background:btn.btn1?"rgba(73, 1, 145, 0.619) 60%":"whitesmoke"}}>
+            <LayoutDashboard></LayoutDashboard>
+            <Text>Dashboard</Text>
+        </div>
+        </div>
         <div style={{display:"flex",width:"100%",height:"fit-content",position:"sticky",
         justifyContent:"center",alignItems:"center"}}>
             <LogOut></LogOut>
         </div>
         </div>
         <div style={{width:"100%",height:"100%",display:"flex",flexDirection:"column",padding:"5px"}}>
-            <div style={{width:"100%",height:"fit-content",flexDirection:"row",display:"flex"}}>
-                <DoorClosed onClick={handle_nav}></DoorClosed>
-                <Text size={"5"} style={{fontFamily:"sans-serif"}}>Dashboard</Text>
+            <div style={{width:"100%",height:"fit-content",flexDirection:"row",display:"flex",justifyContent:"space-between",padding:"5px"}}>
+                <Menu size={"40px"} onClick={handle_nav}></Menu>
+                <Text size={"7"} style={{fontFamily:"sans-serif",fontWeight:"bolder"}}>MMUST HOMES</Text>
+                <span style={{backgroundColor:"pink",padding:"5px",borderRadius:"10px"}}>
+                <ShoppingCart color="green" size={"40px"}></ShoppingCart>
+                </span>
+        
             </div>
-            <div style={{width:"100%",height:"100%"}}>
+            <div style={{width:"100%",height:"100%",padding:"5px"}}>
                 {children}
             </div>
         </div>

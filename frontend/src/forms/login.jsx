@@ -2,6 +2,7 @@ import { Button, TextField } from "@radix-ui/themes";
 import { client } from "../axios/supabase.js";
 import { useState } from "react";
 import { Label } from "@radix-ui/themes/components/context-menu";
+import {useNavigate} from "react-router-dom";
 export default function Login(){
     const[form,setform]=useState({email:"",password:""})
     const change=(e)=>{
@@ -11,11 +12,13 @@ export default function Login(){
             [name]:value
         }))
     }
+    const nav=useNavigate();
     const login=async(e)=>{
         e.preventDefault;
         const{data,error}=await client.auth.signInWithPassword({email:form.email,password:form.password});
         if(data){
-            alert("Authenticated user")
+            alert("Authenticated user");
+            nav("/houses");
         }else{
             alert("failed to authenticate")
             console.log(error)

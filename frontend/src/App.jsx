@@ -13,7 +13,10 @@ function App() {
     <Theme>
     <Router>
       <Routes>
-        {/* <Route path="/register" element={<Register_Form/>}/> */}
+        <Route path="/register" element={
+          <NavBar>
+          <Register_Form/>
+          </NavBar>}/>
         <Route path="/" element={<Login/>}/>
         <Route path="/houses" element={
           <NavBar>

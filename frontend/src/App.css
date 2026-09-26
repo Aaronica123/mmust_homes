@@ -14,3 +14,16 @@ html, body, #root {
   height: 100%;
   width: 100%;
 }
+.crd{
+  transition: transform 0.5s,box-shadow 0.2s ease;
+}
+.crd:hover{
+  transform: translateY(-2px) translateX(3px) ;
+  box-shadow: -2px 4px 15px rgba(0, 0, 0, 0.438);
+  cursor: pointer;
+}
+.awscrd:hover{
+  transform: translateY(-2px) translateX(3px) ;
+  box-shadow: -2px 4px 15px rgba(73, 1, 145, 0.619);
+  cursor: pointer;
+}
