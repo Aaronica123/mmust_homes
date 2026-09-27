@@ -3,7 +3,7 @@ import axios_client from "../axios/axios";
 import { setOptions, importLibrary } from "@googlemaps/js-api-loader";
 
 // Set your Google Maps API Key here
-const GOOGLE_MAPS_API_KEY = "AIzaSyD4BjaMjD3DyQGsNuHhYznRjKxRPWvtXVY";
+const GOOGLE_MAPS_API_KEY = "Google_api_key";
 
 // Configure the loader options once globally
 setOptions({
