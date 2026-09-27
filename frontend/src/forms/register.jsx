@@ -3,7 +3,7 @@ import axios_client from "../axios/axios";
 import { setOptions, importLibrary } from "@googlemaps/js-api-loader";
 
 // Set your Google Maps API Key here
-const GOOGLE_MAPS_API_KEY = "Google_api_key";
+const GOOGLE_MAPS_API_KEY = "AIzaSyD4BjaMjD3DyQGsNuHhYznRjKxRPWvtXVY";
 
 // Configure the loader options once globally
 setOptions({
@@ -13,6 +13,7 @@ setOptions({
 
 function Register_Form() {
   const [image, setimage] = useState({ input: null });
+  const[state,setstate]=useState({manual:true,current:false})
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   const markerRef = useRef(null);
@@ -168,6 +169,7 @@ const town_change=(e)=>{
 
 }
 const use_location=async()=>{
+  setstate({manual:true,current:false})
   if(!mapRef.current){
     console.log("map not initialized")
     return;
@@ -206,7 +208,7 @@ const use_location=async()=>{
   }
   mapRef.current.setCenter(manual_val);
   mapRef.current.setZoom(16);
-
+  setdata((data)=>({...data,house_coordinates:{lat:manual_val.lat,long:manual_val.lng}}))
   if(markerRef.current){
     markerRef.current.setPosition(manual_val)
   }else{
@@ -225,10 +227,15 @@ console.log(towns.main,towns.sub)
   }
   // Function to center map on user's current location via browser Geolocation API
   const handleUseCurrentLocation = async () => {
+    setstate({manual:false,current:true})
+    if(manual){
+      exitManualMode();
+    }
     if (!navigator.geolocation) {
       alert("Geolocation is not supported by your browser.");
       return;
     }
+
 
     navigator.geolocation.getCurrentPosition(
       async (position) => {
@@ -282,13 +289,15 @@ console.log(towns.main,towns.sub)
     for (let count = 0; count < image.input.length; count++) {
       Frm.append("images", image.input[count]);
     }
-
-    navigator.geolocation.getCurrentPosition(async(values)=>{
-      setcoord({lat:values.coords.latitude,long:values.coords.longitude})
-       Frm.append(
+    if(data.house_type==''){
+      alert("Enter the house type");
+      return
+    }
+    if(state.manual){
+      Frm.append(
       "body",
       JSON.stringify({
-        house_coordinates: {lat:values.coords.latitude,long:values.coords.longitude},
+        house_coordinates: data.house_coordinates,
         house_name: data.house_name,
         user_id: data.user_id,
         house_location:data.house_location,
@@ -308,7 +317,35 @@ console.log(towns.main,towns.sub)
     } catch (error) {
       console.error("Upload error:", error);
     }
+    }else{
+    navigator.geolocation.getCurrentPosition(async(values)=>{
+      setcoord({lat:values.coords.latitude,long:values.coords.longitude})
+       Frm.append(
+      "body",
+      JSON.stringify({
+        house_coordinates: {lat:values.coords.latitude,long:values.coords.longitude},
+        house_name: data.house_name,
+        user_id: data.user_id,
+        house_location:data.house_location,
+        house_available:data.house_available,
+        house_rooms:data.house_rooms,
+        house_type:data.house_type
+      })
+    );
+  
+     try {
+      console.log(Frm.get("body"));
+      const { data, status } = await axios_client.post("/api/register_house", Frm);
+      if (status === 200) {
+        console.log("Successfully uploaded image", data);
+      } else {
+        console.log(status, data);
+      }
+    } catch (error) {
+      console.error("Upload error:", error);
+    }
     })
+  }
     
     // Capture current map center coordinates for submission
     console.log(coord)
@@ -334,6 +371,7 @@ console.log(towns.main,towns.sub)
         <input type="text" placeholder="enter house name" name="house_name" value={data.house_name} onChange={datachange}/>
         <label>House Type</label>
         <select  name="house_type" onChange={datachange}>
+          <option  value={""}>Choose room type</option>
           <option  value={"bedroom"}>bedroom</option>
           <option  value={"bedsitter"}>bedsitter</option>
           <option  value={"single"}>single</option>
