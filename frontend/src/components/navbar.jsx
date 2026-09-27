@@ -2,13 +2,17 @@ import { useState } from "react"
 import {BoxIcon, DoorClosed, LayoutDashboard, ScanBarcode,Menu, ShoppingCart, ShoppingCartPlus, ShoppingCartPlusIcon}from "lucide-react";
 import { LogOut } from "lucide-react";
 import { Avatar, Button, Card, Text } from "@radix-ui/themes";
-
+import { useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
 export default function NavBar({children}){
     const [nav,setnav]=useState(true);
     const[btn,setbtn]=useState({btn1:true})
     const handle_nav=()=>{
         setnav(!nav)
+    }
+    const route=useNavigate();
+    const direct=()=>{
+        route("/houses");
     }
 return(
     <>
@@ -46,7 +50,7 @@ return(
         </div>
         <div style={{width:"100%",height:"100%",display:"flex",flexDirection:"column",padding:"5px"}}>
         <Text>Main</Text>
-        <div onClick={()=>{setbtn({btn1:true}),setnav(false)}} className="crd"style={{width:"100%",height:"fit-content",whiteSpace:"nowrap",
+        <div onClick={()=>{setbtn({btn1:true});setnav(false),route("/houses")}} className="crd"style={{width:"100%",height:"fit-content",whiteSpace:"nowrap",
         padding:"10px",borderRadius:"10px",
             display:"flex",flexDirection:"row",cursor:"pointer",background:btn.btn1?"rgba(73, 1, 145, 0.619) 60%":"whitesmoke"}}>
             <LayoutDashboard></LayoutDashboard>

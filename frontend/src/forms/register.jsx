@@ -3,7 +3,7 @@ import axios_client from "../axios/axios";
 import { setOptions, importLibrary } from "@googlemaps/js-api-loader";
 
 // Set your Google Maps API Key here
-const GOOGLE_MAPS_API_KEY = "YOUR_GOOGLE_MAPS_API_KEY";
+const GOOGLE_MAPS_API_KEY = "Google_api_key";
 
 // Configure the loader options once globally
 setOptions({
@@ -17,9 +17,43 @@ function Register_Form() {
   const mapRef = useRef(null);
   const markerRef = useRef(null);
   const[coord,setcoord]=useState({lat:"",long:""})
+  const clickListen=useRef(null)
+  const[manual,setmanual]=useState(false)
   const [data,setdata]=useState({house_location:"",house_name:"",house_rooms:"",house_available:"",
     house_coordinates:{lat:0,long:0},
     house_type:"",user_id:""})
+  const cities={
+    Kakamega: {
+    center: { lat: 0.282731, lng: 34.751863 },
+    zoom: 12,
+    towns: {
+      Milimani:{lat: 0.2833, lng: 34.7500 },
+      Shieywe:{lat: 0.3000, lng: 34.7500 },
+      Lurambi:{lat: 0.2833, lng: 34.7333 },
+      Mumias:{ lat: 0.3333, lng: 34.4833 },
+      Butere:{ lat: 0.2167, lng: 34.5000 },
+    },
+  },
+  Mombasa: {
+    center: { lat: -4.043477, lng: 39.668206 },
+    zoom: 12,
+    towns: {
+      Nyali:              { lat: -4.0333, lng: 39.7000 },
+      Bamburi:            { lat: -3.9833, lng: 39.7167 },
+      Likoni:             { lat: -4.0833, lng: 39.6667 },
+      Changamwe:          { lat: -4.0333, lng: 39.6167 },
+      Kisauni:            { lat: -4.0333, lng: 39.6833 },
+      Mtwapa:             { lat: -3.9500, lng: 39.7500 },
+      Diani:              { lat: -4.2833, lng: 39.5833 },
+      Tudor:              { lat: -4.0500, lng: 39.6667 },
+      Mikindani:          { lat: -4.0667, lng: 39.6667 },
+      Shanzu:             { lat: -3.9833, lng: 39.7333 },
+      Miritini:           { lat: -4.0167, lng: 39.6000 },
+      Magongo:            { lat: -4.0333, lng: 39.6333 },
+    },
+  },
+}
+  
   
   const datachange=(e)=>{
     const{name,value}=e.target
@@ -62,6 +96,133 @@ function Register_Form() {
     };
   }, []);
 
+   const exitManualMode = () => {
+    setmanual(false);
+    if (clickListen.current) {
+      window.google?.maps?.event?.removeListener(clickListen.current);
+      clickListen.current = null;
+    }
+    // Change cursor back to default
+    if (mapRef.current) {
+      mapRef.current.setOptions({ draggableCursor: null });
+    }
+  };
+  const manual_handle=async()=>{
+  if(!mapRef.current){
+    alert ("Map not rendered yet");return;}
+    if(manual){
+      exitManualMode();
+      return;
+    }
+    await importLibrary("maps");
+    setmanual(true);
+    mapRef.current.setOptions({ draggableCursor: "crosshair" });
+    clickListen.current=mapRef.current.addListener('click',async(value)=>{
+        const clickedLat = value.latLng.lat();
+        const clickedLng = value.latLng.lng();
+
+        const newPos = { lat: clickedLat, lng: clickedLng };
+
+    if (markerRef.current) {
+  markerRef.current.setPosition(newPos);
+  markerRef.current.setTitle("Manually Selected Location");
+  } else {
+  markerRef.current = new window.google.maps.Marker({
+    position: newPos,
+    map: mapRef.current,
+    title: "Manually Selected Location",
+    draggable: true,
+    animation: window.google.maps.Animation.DROP,
+  });
+}
+
+    })
+  
+  }
+
+const [arr,setarr]=useState(Object.keys(cities))
+const [sub,setsub]=useState(Object.keys(cities.Kakamega.towns));
+const [towns,tracktow]=useState({main:'',sub:''});
+useEffect(()=>{
+  setarr(Object.keys(cities))},[])
+
+const town_change=(e)=>{
+  console.log(towns.main,towns.sub)
+  // Object.values(cities[towns.main].towns[towns.sub])
+  const{name,value}=e.target;
+  tracktow((data)=>({
+    ...data,
+    [name]:value
+  }))
+  if(name=="main"){
+  if(value==''){
+    tracktow((data)=>({...data,main:"",sub:""}))
+    setsub([])
+  }else{
+  Object.values(cities[value]).length>0?
+  setsub(Object.keys(cities[value].towns)):
+  setsub([]),tracktow((data)=>({...data,sub:""}))
+  console.log(towns.main,towns.sub)
+  }
+}
+
+}
+const use_location=async()=>{
+  if(!mapRef.current){
+    console.log("map not initialized")
+    return;
+  }
+  if(manual){
+    exitManualMode();
+    return;
+  }
+  await importLibrary("maps");
+  setmanual(true);
+  if(towns.main&&towns.main!=''){
+    if(towns.sub){
+      
+      const coor={
+        lat:Object.values(cities[towns.main].towns[towns.sub])[0],
+        lng:Object.values(cities[towns.main].towns[towns.sub])[1]
+      }
+      console.log(coor)
+      mapRef.current.setCenter(coor)
+      mapRef.current.setZoom(16);
+    }else{
+      mapRef.current.setCenter(Object.values(cities[towns.main].center))
+      mapRef.current.setZoom(Object.values(cities[towns.main].zoom));
+    }
+  }else{
+    alert("Must choose a city")
+    return
+  }
+  mapRef.current.setOptions({ draggableCursor: "crosshair" });
+  clickListen.current=mapRef.current.addListener('click',async(coord)=>{
+  const coordlat=coord.latLng.lat();
+  const coordlong=coord.latLng.lng();
+  const manual_val={
+    lat:coordlat,
+    lng:coordlong
+  }
+  mapRef.current.setCenter(manual_val);
+  mapRef.current.setZoom(16);
+
+  if(markerRef.current){
+    markerRef.current.setPosition(manual_val)
+  }else{
+    markerRef.current = new window.google.maps.Marker({
+              position: manual_val,
+              map: mapRef.current,
+              title: "House location",
+            });
+  }
+  })
+
+}
+
+  const se=()=>{
+console.log(towns.main,towns.sub)
+  }
   // Function to center map on user's current location via browser Geolocation API
   const handleUseCurrentLocation = async () => {
     if (!navigator.geolocation) {
@@ -127,7 +288,7 @@ function Register_Form() {
        Frm.append(
       "body",
       JSON.stringify({
-        house_coordinates: coord,
+        house_coordinates: {lat:values.coords.latitude,long:values.coords.longitude},
         house_name: data.house_name,
         user_id: data.user_id,
         house_location:data.house_location,
@@ -197,6 +358,23 @@ function Register_Form() {
       <div style={{ marginTop: "15px" }}>
         <button type="button" onClick={handleUseCurrentLocation}>
           Use Current Location
+        </button>
+        <select onChange={town_change} name="main">
+          <option value={''}>Choose a town</option>
+          {arr.map((data,index)=>(
+            <option key={index} value={data} >{data}</option>
+          ))}
+        </select>
+         <select onChange={town_change} name="sub">
+         <option value="">Choose a city</option>
+          {sub.map((data,index)=>(
+            <option key={index} value={data}>{data}</option>
+          ))}
+        </select>
+        <button onClick={se} type="button">Check</button>
+        <button onClick={use_location} type="button">Filter Location</button>
+        <button color="blue" type="button" onClick={manual_handle}>
+          Use Manual Location
         </button>
       </div>
 
