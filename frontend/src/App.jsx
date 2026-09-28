@@ -7,6 +7,7 @@ import Home from "./forms/rooms";
 import NavBar from "./components/navbar";
 import Login from "./forms/login";
 import { Auth } from "./auth/auth";
+import Create_user from "./forms/create";
 function App() {
 
 
@@ -22,6 +23,7 @@ function App() {
           </Auth>
           }/>
         <Route path="/" element={<Login/>}/>
+        <Route path="/create_user" element={<Create_user/>}/>
         <Route path="/houses" element={
           <NavBar>
           <Home/>

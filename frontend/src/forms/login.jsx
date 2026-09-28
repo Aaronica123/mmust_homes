@@ -25,6 +25,9 @@ export default function Login(){
         }
 
     }
+    const move=()=>{
+        nav("/create_user")
+    }
     return(
         <>
         <div style={{height:"100%",width:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
@@ -36,7 +39,10 @@ export default function Login(){
         <TextField.Root  style={{width:"50%",height:"fit-content",padding:"5px"}} value={form.password} 
          onChange={change} name="password" type="password" placeholder="Enter password to login..."> 
         </TextField.Root>
+        <div style={{width:"fit-content" ,height:"fit-content",display:"inline",gap:"10px"}}>
         <Button type="button" variant="classic" onClick={login}>Login</Button>
+        <Button type="button" variant="ghost" onClick={move}>Register</Button>
+        </div>
         </div>
         </div>
         </>
