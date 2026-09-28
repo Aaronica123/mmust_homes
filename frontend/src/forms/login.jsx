@@ -16,7 +16,7 @@ export default function Login(){
     const login=async(e)=>{
         e.preventDefault;
         const{data,error}=await client.auth.signInWithPassword({email:form.email,password:form.password});
-        if(data){
+        if(data.user){
             alert("Authenticated user");
             nav("/houses");
         }else{

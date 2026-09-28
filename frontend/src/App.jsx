@@ -6,6 +6,7 @@ import Register_Form from "./forms/register";
 import Home from "./forms/rooms";
 import NavBar from "./components/navbar";
 import Login from "./forms/login";
+import { Auth } from "./auth/auth";
 function App() {
 
 
@@ -14,9 +15,12 @@ function App() {
     <Router>
       <Routes>
         <Route path="/register" element={
+          <Auth>
           <NavBar>
           <Register_Form/>
-          </NavBar>}/>
+          </NavBar>
+          </Auth>
+          }/>
         <Route path="/" element={<Login/>}/>
         <Route path="/houses" element={
           <NavBar>
