@@ -3,16 +3,16 @@ import client from "../supabase.js";
 export default async function Register(req,res){
     try{
     const{user_email,user_id,first_name,last_name,user_role,
-        password,house_name,house_location}=req.body;
+        password}=req.body;
     if(!user_email||!user_id||!first_name||!last_name||!password){
         return res.status(409).json({message:"missing values"});
-    }
-    else if(user_role=='provider'&&(!house_name||!house_location)){
-        if(!house_location){
-        return res.status(409).json({message:"Enter house location"});
-        }else{
-            return res.status(409).json({message:"Enter house name"});
-        };
+    // }
+    // else if(user_role=='provider'&&(!house_name||!house_location)){
+    //     if(!house_location){
+    //     return res.status(409).json({message:"Enter house location"});
+    //     }else{
+    //         return res.status(409).json({message:"Enter house name"});
+    //     };
     }else{
         const{data:da,error:er}=await client.auth.admin.createUser({
             email:user_email,password:password,user_metadata:{user_role:user_role},email_confirm:true});
