@@ -15,11 +15,12 @@ export default async function Register(req,res){
         };
     }else{
         const{data:da,error:er}=await client.auth.admin.createUser({
-            email:user_email,password:password,user_metadata:{user_role:user_role}});
+            email:user_email,password:password,user_metadata:{user_role:user_role},email_confirm:true});
         const{data,error}=await client.schema("mmust_homes").from("users").insert({
             user_id:user_id,user_email:user_email,
             first_name:first_name,last_name:last_name,user_role:user_role}).select();
         if(data&&da){
+            
             console.log("created user and stored");
         }else{
             console.log(error);
