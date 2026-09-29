@@ -25,10 +25,11 @@ function App() {
         <Route path="/" element={<Login/>}/>
         <Route path="/create_user" element={<Create_user/>}/>
         <Route path="/houses" element={
+          <Auth>
           <NavBar>
           <Home/>
           </NavBar>
-          
+          </Auth>
         }/>
       </Routes>
     </Router>

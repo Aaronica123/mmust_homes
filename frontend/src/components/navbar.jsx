@@ -5,8 +5,10 @@ import { Avatar, Button, Card, Text } from "@radix-ui/themes";
 import { useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
 import { client } from "../axios/supabase";
-
+import Auth_parent from "../auth/auth";
 export default function NavBar({children}){
+    const{user}=Auth_parent();
+    console.log(Auth_parent())
     const [nav,setnav]=useState(true);
     const[btn,setbtn]=useState({btn1:true,btn2:false})
      const route=useNavigate();
@@ -62,12 +64,16 @@ return(
             <LayoutDashboard></LayoutDashboard>
             <Text>Dashboard</Text>
         </div>
+        {user.user_role=="provider"?
         <div onClick={()=>{setbtn({btn1:false,btn2:true});setnav(false),route("/register")}} className="crd"style={{width:"100%",height:"fit-content",whiteSpace:"nowrap",
         padding:"10px",borderRadius:"10px",
             display:"flex",flexDirection:"row",cursor:"pointer",background:btn.btn2?"rgba(73, 1, 145, 0.619) 60%":"whitesmoke"}}>
             <LayoutDashboard></LayoutDashboard>
             <Text>Register</Text>
         </div>
+        :
+        ""
+}
         </div>
         </div>
         <div style={{display:"flex",width:"100%",height:"fit-content",position:"sticky",

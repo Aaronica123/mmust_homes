@@ -44,8 +44,10 @@ export function Auth({children}){
     )
 }
 export default function Auth_parent(){
-    const value=useContext(Auth_parent);
-    if(!value){
-        alert("Must be in auth route")
+    const value_auth=useContext(Authparent);
+    if(!value_auth){
+        alert("Must be in auth route");
+         return;
     }
+    return value_auth;
 }
