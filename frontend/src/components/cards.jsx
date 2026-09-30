@@ -1,7 +1,23 @@
 import {Badge, Card, Inset, Text} from "@radix-ui/themes";
 import { Button } from "@radix-ui/themes";
+import { useEffect, useState } from "react";
+import Navigate_map from "../forms/navigate";
 export default function Cardimage({text}){
-    console.log(text)
+    const[coord,setcoord]=useState({lat:"",long:""})
+    const [click,setclick]=useState(false);
+    const na=async()=>{
+        navigator.geolocation.getCurrentPosition(async(value)=>{
+            setcoord({lat:value.coords.latitude,long:value.coords.longitude})
+        })
+    }
+    useEffect(()=>{
+        na();
+    },[])
+    const change=()=>{
+        setclick(!click);
+    }
+
+    
     return(
 
         <>
@@ -36,6 +52,7 @@ export default function Cardimage({text}){
             )}
             <div style={{width:"100%",height:"fit-content",display:"flex",justifyContent:"left"}}>
             <Button variant="classic">Shortlist</Button>
+            <Button onClick={change}>Location</Button>
             </div>
             </div>
             </div>

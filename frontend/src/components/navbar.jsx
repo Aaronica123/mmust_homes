@@ -6,11 +6,13 @@ import { useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
 import { client } from "../axios/supabase";
 import Auth_parent from "../auth/auth";
+import { useEffect } from "react";
 export default function NavBar({children}){
     const{user}=Auth_parent();
     console.log(Auth_parent())
     const [nav,setnav]=useState(true);
     const[btn,setbtn]=useState({btn1:true,btn2:false})
+    const[wish,setwish]=useState({})
      const route=useNavigate();
     const handle_nav=()=>{
         setnav(!nav)
@@ -20,6 +22,16 @@ export default function NavBar({children}){
             route("/",{replace:true});
         }).catch((error)=>{console.log(error)});
     }
+    const house=async()=>{
+        const{data,error}=await client.schema("mmust_homes").from("profile").select("house_data").match({user_id:Number(user.user_id)})
+        const{data:da,error:er}=await client.schema("mmust_homes").from("profile").update({house_data:{new:"new"}}).match({user_id:Number(user.user_id)}).select();
+        console.log("data is "+da);
+        setwish(data)
+        console.log(er)
+    }
+    useEffect(()=>{
+        house()
+    },[])
    
 return(
     <>
