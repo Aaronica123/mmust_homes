@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { Button, TextField } from "@radix-ui/themes";
+import { ImagePlus, LocateFixed, MapPin, Crosshair } from "lucide-react";
 import axios_client from "../axios/axios";
 import { setOptions, importLibrary } from "@googlemaps/js-api-loader";
 
@@ -9,6 +11,156 @@ setOptions({
   key: import.meta.env.VITE_GOOGLE_KEY,
   v: "weekly",
 });
+
+const styles = `
+.hr-page {
+  --hr-900: #0f3d24;
+  --hr-700: #166534;
+  --hr-600: #15803d;
+  --hr-500: #16a34a;
+  --hr-100: #dcfce7;
+  --hr-50: #f0fdf4;
+  --hr-ink: #10251a;
+  --hr-muted: #5b6f63;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  padding: 16px 12px 48px;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: var(--hr-ink);
+}
+.hr-card {
+  width: 100%;
+  max-width: 780px;
+  box-sizing: border-box;
+  background: #fff;
+  border: 1px solid #d7ecdd;
+  border-top: 4px solid var(--hr-600);
+  border-radius: 16px;
+  padding: 44px 44px 40px;
+  box-shadow: 0 18px 40px -18px rgba(15, 61, 36, 0.35);
+}
+.hr-title {
+  margin: 0 0 6px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--hr-900);
+}
+.hr-sub { margin: 0 0 8px; font-size: 15px; line-height: 1.5; color: var(--hr-muted); }
+
+.hr-section { margin-top: 34px; padding-top: 28px; border-top: 1px solid #e4f2e8; }
+.hr-section:first-of-type { border-top: none; padding-top: 0; }
+.hr-h2 {
+  margin: 0 0 4px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--hr-900);
+}
+.hr-hint { margin: 0 0 20px; font-size: 14px; line-height: 1.5; color: var(--hr-muted); }
+
+.hr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 18px; }
+.hr-full { grid-column: 1 / -1; }
+.hr-label { display: block; margin-bottom: 7px; font-size: 14px; font-weight: 600; color: var(--hr-900); }
+
+.hr-input {
+  width: 100%;
+  background: #fbfefc;
+  box-shadow: inset 0 0 0 1.5px #c6dfce;
+  border-radius: 10px;
+  transition: box-shadow 0.15s ease, background 0.15s ease;
+}
+.hr-input input { font-size: 16px; color: var(--hr-ink); }
+.hr-input input::placeholder { color: #8ea496; }
+.hr-input:hover { box-shadow: inset 0 0 0 1.5px #8fc4a0; }
+.hr-input:focus-within {
+  outline: none;
+  background: #fff;
+  box-shadow: inset 0 0 0 2px var(--hr-500), 0 0 0 4px rgba(22, 163, 74, 0.18);
+}
+.hr-input:has(input:disabled) { background: #f1f5f2; box-shadow: inset 0 0 0 1.5px #dbe6de; }
+
+.hr-select {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 40px 0 12px;
+  font: inherit;
+  font-size: 16px;
+  color: var(--hr-ink);
+  background: #fbfefc url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23166534' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 14px center;
+  border: none;
+  border-radius: 10px;
+  box-shadow: inset 0 0 0 1.5px #c6dfce;
+  appearance: none;
+  cursor: pointer;
+  transition: box-shadow 0.15s ease, background-color 0.15s ease;
+}
+.hr-select:hover { box-shadow: inset 0 0 0 1.5px #8fc4a0; }
+.hr-select:focus {
+  outline: none;
+  background-color: #fff;
+  box-shadow: inset 0 0 0 2px var(--hr-500), 0 0 0 4px rgba(22, 163, 74, 0.18);
+}
+.hr-select:invalid { color: #8ea496; }
+.hr-select option { color: var(--hr-ink); }
+
+.hr-drop {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 26px 16px;
+  text-align: center;
+  color: var(--hr-700);
+  background: var(--hr-50);
+  border: 2px dashed #8fc4a0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.hr-drop:hover { background: var(--hr-100); border-color: var(--hr-500); }
+.hr-drop:focus-within {
+  border-color: var(--hr-500);
+  box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.18);
+}
+.hr-drop-title { font-size: 16px; font-weight: 600; color: var(--hr-900); }
+.hr-drop-sub { font-size: 14px; color: var(--hr-muted); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hr-file { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+
+.hr-btn { width: 100%; height: 44px; font-size: 15px; font-weight: 600; cursor: pointer; }
+.hr-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.hr-map {
+  width: 100%;
+  height: 380px;
+  margin-top: 20px;
+  overflow: hidden;
+  background: var(--hr-100);
+  border: 1px solid #d7ecdd;
+  border-radius: 12px;
+}
+.hr-map > div { width: 100%; height: 100%; }
+.hr-status {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  font-size: 14px;
+  color: var(--hr-700);
+  background: var(--hr-50);
+  border: 1px solid #b7e4c4;
+  border-radius: 8px;
+}
+.hr-submit { margin-top: 34px; }
+.hr-submit button { width: 100%; height: 48px; font-size: 16px; font-weight: 600; cursor: pointer; }
+
+@media (max-width: 600px) {
+  .hr-card { padding: 28px 20px 26px; }
+  .hr-grid, .hr-pair { grid-template-columns: 1fr; }
+  .hr-map { height: 320px; }
+}
+`;
 
 function Register_Form() {
   const [image, setimage] = useState({ input: null });
@@ -356,74 +508,244 @@ console.log(towns.main,towns.sub)
    
   };
 
+  const imageCount = image.input ? image.input.length : 0;
+  const imageNames = image.input ? Array.from(image.input).map((f) => f.name).join(", ") : "";
+
   return (
     <>
-      <form>
-        <label>Enter your image</label>
-        <input
-          type="file"
-          multiple
-          placeholder="enter a file"
-          onChange={image_change}
-        />
-        <label>House Name</label>
-        <input type="text" placeholder="enter house name" name="house_name" value={data.house_name} onChange={datachange}/>
-        <label>House Type</label>
-        <select  name="house_type" onChange={datachange}>
-          <option  value={""}>Choose room type</option>
-          <option  value={"bedroom"}>bedroom</option>
-          <option  value={"bedsitter"}>bedsitter</option>
-          <option  value={"single"}>single</option>
-        </select>
-        <label>Room type</label>
-        {data.house_type=="single"?
-        <input disabled placeholder="cannot enter room type"></input>
-        :
-        <input type="text" placeholder="enter room type" value={data.house_rooms} name="house_rooms" onChange={datachange}></input>}
-        <label>User id</label>
-        <input type="number" value={data.user_id} name="user_id" onChange={datachange}/>
-        <label>House Location</label>
-        <input type="text" name="house_location" value={data.house_location} placeholder="enter house location" onChange={datachange}/>
-        <label>Rooms Available</label>
-        <input type="number" name="house_available" value={data.house_available} onChange={datachange} placeholder="enter available houses"/>
-        <button type="button" onClick={submit}>
-          Submit
-        </button>
-      </form>
+      <style>{styles}</style>
+      <div className="hr-page">
+        <form className="hr-card" onSubmit={submit}>
+          <h1 className="hr-title">List your house</h1>
+          <p className="hr-sub">
+            Add clear photos and accurate details so the right tenants can find your place.
+          </p>
 
-      {/* Button to trigger current location centering */}
-      <div style={{ marginTop: "15px" }}>
-        <button type="button" onClick={handleUseCurrentLocation}>
-          Use Current Location
-        </button>
-        <select onChange={town_change} name="main">
-          <option value={''}>Choose a town</option>
-          {arr.map((data,index)=>(
-            <option key={index} value={data} >{data}</option>
-          ))}
-        </select>
-         <select onChange={town_change} name="sub">
-         <option value="">Choose a city</option>
-          {sub.map((data,index)=>(
-            <option key={index} value={data}>{data}</option>
-          ))}
-        </select>
-        <button onClick={se} type="button">Check</button>
-        <button onClick={use_location} type="button">Filter Location</button>
-        <button color="blue" type="button" onClick={manual_handle}>
-          Use Manual Location
-        </button>
-      </div>
+          {/* ---------- House details ---------- */}
+          <section className="hr-section">
+            <h2 className="hr-h2">House details</h2>
+            <p className="hr-hint">Tell house hunters what you are offering.</p>
 
-      <div
-        style={{
-          width: "100%",
-          maxWidth: "600px",
-          height: "450px",
-          marginTop: "15px",
-        }}
-      >
-        <div ref={mapContainerRef} style={{ width: "100%", height: "100%" }} />
+            <div className="hr-grid">
+              <div className="hr-full">
+                <span className="hr-label">House images</span>
+                <label className="hr-drop" htmlFor="images">
+                  <ImagePlus size={28} />
+                  <span className="hr-drop-title">
+                    {imageCount
+                      ? `${imageCount} image${imageCount > 1 ? "s" : ""} selected`
+                      : "Choose house images"}
+                  </span>
+                  <span className="hr-drop-sub">
+                    {imageCount ? imageNames : "You can select more than one photo"}
+                  </span>
+                  <input
+                    id="images"
+                    className="hr-file"
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    required
+                    onChange={image_change}
+                  />
+                </label>
+              </div>
+
+              <div className="hr-full">
+                <label className="hr-label" htmlFor="house_name">House name</label>
+                <TextField.Root
+                  id="house_name"
+                  className="hr-input"
+                  size="3"
+                  type="text"
+                  name="house_name"
+                  required
+                  value={data.house_name}
+                  onChange={datachange}
+                  placeholder="e.g. Green Court Apartments"
+                />
+              </div>
+
+              <div>
+                <label className="hr-label" htmlFor="house_type">House type</label>
+                <select
+                  id="house_type"
+                  className="hr-select"
+                  name="house_type"
+                  required
+                  value={data.house_type}
+                  onChange={datachange}
+                >
+                  <option value="">Choose house type</option>
+                  <option value="bedroom">Bedroom</option>
+                  <option value="bedsitter">Bedsitter</option>
+                  <option value="single">Single</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="hr-label" htmlFor="house_rooms">Room type</label>
+                {data.house_type == "single" ? (
+                  <TextField.Root
+                    id="house_rooms"
+                    className="hr-input"
+                    size="3"
+                    disabled
+                    placeholder="Not needed for single rooms"
+                  />
+                ) : (
+                  <TextField.Root
+                    id="house_rooms"
+                    className="hr-input"
+                    size="3"
+                    type="text"
+                    name="house_rooms"
+                    value={data.house_rooms}
+                    onChange={datachange}
+                    placeholder="Enter room type"
+                  />
+                )}
+              </div>
+
+              <div>
+                <label className="hr-label" htmlFor="house_available">Rooms available</label>
+                <TextField.Root
+                  id="house_available"
+                  className="hr-input"
+                  size="3"
+                  type="number"
+                  name="house_available"
+                  required
+                  value={data.house_available}
+                  onChange={datachange}
+                  placeholder="How many are vacant?"
+                />
+              </div>
+
+              <div>
+                <label className="hr-label" htmlFor="user_id">User ID</label>
+                <TextField.Root
+                  id="user_id"
+                  className="hr-input"
+                  size="3"
+                  type="number"
+                  name="user_id"
+                  required
+                  value={data.user_id}
+                  onChange={datachange}
+                  placeholder="Enter your ID number"
+                />
+              </div>
+
+              <div className="hr-full">
+                <label className="hr-label" htmlFor="house_location">House location</label>
+                <TextField.Root
+                  id="house_location"
+                  className="hr-input"
+                  size="3"
+                  type="text"
+                  name="house_location"
+                  required
+                  value={data.house_location}
+                  onChange={datachange}
+                  placeholder="e.g. Milimani, Kakamega"
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* ---------- Map location ---------- */}
+          <section className="hr-section">
+            <h2 className="hr-h2">Pin the location</h2>
+            <p className="hr-hint">
+              Use your current position, or choose a city and town and click the map
+              to drop a pin on the exact spot.
+            </p>
+
+            <Button
+              type="button"
+              className="hr-btn"
+              color="green"
+              variant="soft"
+              size="3"
+              onClick={handleUseCurrentLocation}
+            >
+              <LocateFixed size={18} />
+              Use current location
+            </Button>
+
+            <div className="hr-grid" style={{ marginTop: 20 }}>
+              <div>
+                <label className="hr-label" htmlFor="main">City</label>
+                <select
+                  id="main"
+                  className="hr-select"
+                  name="main"
+                  value={towns.main}
+                  onChange={town_change}
+                >
+                  <option value="">Choose a city</option>
+                  {arr.map((c, index) => (
+                    <option key={index} value={c}>{c}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="hr-label" htmlFor="sub">Town or area</label>
+                <select
+                  id="sub"
+                  className="hr-select"
+                  name="sub"
+                  value={towns.sub}
+                  onChange={town_change}
+                >
+                  <option value="">Choose a town</option>
+                  {sub.map((t, index) => (
+                    <option key={index} value={t}>{t}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="hr-pair" style={{ marginTop: 20 }}>
+              <Button
+                type="button"
+                className="hr-btn"
+                color="green"
+                variant="outline"
+                size="3"
+                onClick={use_location}
+              >
+                <MapPin size={18} />
+                Show on map
+              </Button>
+              <Button
+                type="button"
+                className="hr-btn"
+                color="green"
+                variant={manual ? "solid" : "outline"}
+                size="3"
+                onClick={manual_handle}
+              >
+                <Crosshair size={18} />
+                {manual ? "Stop pinning" : "Pin manually"}
+              </Button>
+            </div>
+
+            {manual && <p className="hr-status">Click anywhere on the map to place the pin.</p>}
+
+            <div className="hr-map">
+              <div ref={mapContainerRef} />
+            </div>
+          </section>
+
+          <div className="hr-submit">
+            <Button type="submit" color="green" variant="solid" size="3">
+              Register house
+            </Button>
+          </div>
+        </form>
       </div>
     </>
   );
