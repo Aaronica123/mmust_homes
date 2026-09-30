@@ -90,6 +90,7 @@ function Home(){
         </div>
         <Button onClick={ma} style={{zIndex:3}}>Current
         </Button>
+        <Button onClick={()=>settrack(false)} variant="outline" color="bronze">Exit</Button>
     </div>
     <div>
         <button onClick={()=>settrack(!track)}>blur</button>
