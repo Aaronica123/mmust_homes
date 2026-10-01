@@ -26,7 +26,7 @@ export default async function ALl_Fetch(req,res){
     console.log("Pages are "+values.pages)
     values.current=Math.min(index,values.pages);
     values.offset=values.diff*(values.current-1)
-    const{data,error}=await client.schema("mmust_homes").from("houses").select("house_name, house_location, house_type, house_rooms").limit(values.diff).range(values.offset,(values.offset+values.diff));
+    const{data,error}=await client.schema("mmust_homes").from("houses").select("house_name, house_location, house_type, house_rooms,house_coordinates").limit(values.diff).range(values.offset,(values.offset+values.diff));
     console.log(data);
     console.log(error);
     return res.status(200).json({message:"Fetched from schema",data:data})
