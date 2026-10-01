@@ -92,15 +92,27 @@ const styles = `
 
 export default function Cardimage({ text = [], clk }) {
   const [coord, setcoord] = useState({ lat: "", long: "" });
-
-  const na = async () => {
-    navigator.geolocation.getCurrentPosition(async (value) => {
-      setcoord({ lat: value.coords.latitude, long: value.coords.longitude });
-    });
-  };
+  const[final,setfinal]=useState([])
+  var count=0
+  // while(text.length>count&&count<4){
+  //   final.push(text[count])
+  //   count++;
+  // }
+  // const na = async () => {
+  //   navigator.geolocation.getCurrentPosition(async (value) => {
+  //     setcoord({ lat: value.coords.latitude, long: value.coords.longitude });
+  //   });
+  // };
 
   useEffect(() => {
-    na();
+    while(text.length>count){
+    if(count==4){
+      setcoord(text[count])
+    }else{
+    final.push(text[count])
+    }
+    count++;
+  }
   }, []);
 
   const [title, ...details] = text;
@@ -120,10 +132,12 @@ export default function Cardimage({ text = [], clk }) {
         <div className="hc-body">
           <div className="hc-details">
             {title !== undefined && <h3 className="hc-title" title={String(title)}>{title}</h3>}
-            {details.map((data, index) => (
+            {final.map((data, index) => (
+              (index==4?setcoord({data}):
               <Text key={index} className="hc-line" title={String(data)}>
                 {data}
-              </Text>
+              </Text>)
+              
             ))}
           </div>
 
@@ -132,7 +146,7 @@ export default function Cardimage({ text = [], clk }) {
               <Heart size={16} />
               Shortlist
             </Button>
-            <Button type="button" color="green" variant="outline" size="2" onClick={clk}>
+            <Button type="button" color="green" variant="outline" size="2" onClick={()=>clk(coord)}>
               <MapPin size={16} />
               Location
             </Button>

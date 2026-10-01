@@ -17,16 +17,21 @@ function Home(){
     const[loading,setloading]=useState(true);
     const [value,setvalue]=useState([]);
     const[crd,setcrd]=useState({lat:"",long:""})
+    const[home,sethome]=useState({});
     const[track,settrack]=useState(false);
     const parentref=useRef(null);
     const refmap=useRef(null);
     const mark=useRef(null);
+    const mark1=useRef(null);
+    const directService=useRef(null);
+    const directrend=useRef(null);
     const fetch=async()=>{
 
         const data=await axios_client('/api/get_all?index=1');
         console.log(data.data.data);
         const rows=data.data.data.map((value)=>Object.values(value));
         setvalue(rows);
+        console.log(rows);
         setloading(false);
         navigator.geolocation.getCurrentPosition((async(value)=>{
                 setcrd({lat:value.coords.latitude,long:value.coords.longitude})
@@ -44,12 +49,18 @@ function Home(){
         }
         const ch=async()=>{
         const{Map}=await importLibrary("maps")
+        const{DirectionsService,DirectionsRenderer}=await importLibrary("routes")
         refmap.current=new Map(parentref.current,{
         center:{lat:Number(crd.lat),lng:Number(crd.long)},zoom:12
         })
         console.log(Number(crd.lat),Number(crd.long))
-        
+        directService.current=new DirectionsService();
+        directrend.current=new DirectionsRenderer({
+            map:refmap.current,
+            suppressMarkers:true
+        });
         }
+        
     
         ch();
     return ()=>{
@@ -69,6 +80,37 @@ function Home(){
             })
             refmap.current.panTo({lat:Number(crd.lat),lng:Number(crd.long)})
         }
+        const path={
+            origin:{lat:Number(crd.lat),lng:Number(crd.long)},
+            destination:home,
+            travelMode:window.google.maps.TravelMode.WALKING
+        }
+        directService.current.route(path,(result,status)=>{
+            if(status=="OK"){
+                console.log("Success")
+                directrend.current.setDirections(result)
+            }
+            else{
+                console.log("error occured")
+            }
+        })
+    }
+    function dest(value){
+        const dir={
+            lat:Number(value.lat),
+            lng:Number(value.long)
+        }
+        sethome(dir);
+        if(mark1.current){
+            mark1.current.setPosition(dir);
+        }else{
+            mark1.current=new window.google.maps.Marker({
+                position:dir,
+                label:"Destination marker",
+                map:refmap.current
+            })
+        }
+        
     }
     if(loading){
     return(
@@ -99,7 +141,7 @@ function Home(){
     <div style={{width:"80%",height:"100%",gap:"10px",display:"flex",flexDirection:"column",overflow:"visible"}}>
        
             {value.map((data,index)=>((
-                <Cardimage key={index} clk={()=>settrack(!track)} text={data} ></Cardimage>
+                <Cardimage key={index} clk={(value)=>{settrack(!track),dest(value)}} text={data} ></Cardimage>
             )))}
     </div>
     
