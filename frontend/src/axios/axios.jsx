@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axios_client=axios.create({
-    baseURL:"http://localhost:3001",
+    baseURL:import.meta.env.VITE_BACKEND_URL,
     withCredentials:true,
     
 });
