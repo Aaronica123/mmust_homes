@@ -5,9 +5,10 @@ import Register from "./actions/register.js";
 import multer from "multer";
 import House from "./actions/house.js";
 import ALl_Fetch from "./actions/fetch_all.js";
-
+import { configDotenv } from "dotenv";
+configDotenv()
 const app= express();
-const config=cors({origin:"http://localhost:5173",methods:["POST","GET"],credentials:true});
+const config=cors({origin:process.env.frontend_url,methods:["POST","GET"],credentials:true});
 const mult_config=multer({dest:"upload_folder/",limits:{files:2,fileSize:1024*1024*5}});
 app.use(config);
 app.use(express.json());
