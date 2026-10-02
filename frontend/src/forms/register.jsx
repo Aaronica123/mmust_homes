@@ -2,15 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { Button, TextField } from "@radix-ui/themes";
 import { ImagePlus, LocateFixed, MapPin, Crosshair } from "lucide-react";
 import axios_client from "../axios/axios";
-import { setOptions, importLibrary } from "@googlemaps/js-api-loader";
+import "./maps"
+import {  importLibrary } from "@googlemaps/js-api-loader";
 
-
-
-// Configure the loader options once globally
-setOptions({
-  key: import.meta.env.VITE_GOOGLE_KEY,
-  v: "weekly",
-});
 
 const styles = `
 .hr-page {
