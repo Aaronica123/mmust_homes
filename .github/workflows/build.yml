@@ -27,7 +27,8 @@ jobs:
            echo "VITE_SUPABASE_URL=${{secrets.VITE_SUPABASE_URL}}">>.env
            npm install
            npm run build
-           cp dist /files
+      - run: |
+         cp frontend/dist build
       - name: Build backend package
         working-directory: backend
         run: |
