@@ -20,7 +20,9 @@ jobs:
           node-version: 20
       - name: Build frontend package
         working-directory: frontend
-        run: npm build
+        run: |
+           npm install
+           npm run build
       - name: Upload Package
         if: success()
         uses: actions/upload-artifact@v4
