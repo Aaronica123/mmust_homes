@@ -1,0 +1,50 @@
+# This workflow will run tests using node and then publish a package to GitHub Packages when a release is created
+# For more information see: https://docs.github.com/en/actions/publishing-packages/publishing-nodejs-packages
+
+name: Node.js Package
+
+on:
+  release:
+    types: [created]
+env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+jobs:
+  build:
+    runs-on: ["ubuntu-latest","windows-latest"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Build frontend package
+        working-directory: frontend
+        run: npm build
+      - name: Upload Package
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+           name: frontend_artifact
+           path: frontend/dist
+  deploy:
+   needs: build
+   runs-on: [ubuntu-latest]
+   steps:
+     - uses: action/checkout@v4
+     - uses: action/download-artifact@v4
+       with:
+         name: frontend_artifact
+         path: ./build_frontend
+     - run: npm install --global vercel@latest
+     - run: |
+        cd build_frontend
+        vercel link --yes --token=${{secrets.VERCEL_TOKEN}}
+        vercel deploy --prod --token=${{secrets.VERCEL_TOKEN}}
+        
+        
+     
+    
+   
+   
+        
+
