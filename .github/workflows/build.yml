@@ -21,6 +21,7 @@ jobs:
       - name: Build frontend package
         working-directory: frontend
         run: |
+           touch .env
            echo "VITE_SUPABASE_KEY=${{secrets.VITE_SUPABASE_KEY}}">>.env
            echo "VITE_GOOGLE_KEY=${{secrets.VITE_GOOGLE_KEY}}">>.env
            echo"VITE_SUPABASE_URL=${{secrets.VITE_SUPABASE_URL}}">>.env
@@ -32,6 +33,7 @@ jobs:
         with:
            name: frontend_artifact
            path: frontend/dist
+           
   deploy:
    needs: build
    runs-on: ubuntu-latest
