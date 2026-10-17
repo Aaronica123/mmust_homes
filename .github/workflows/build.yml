@@ -43,7 +43,7 @@ jobs:
          echo "docker_ps=${{secrets.DOCKERPS}}">>.env
          npm install
       - run: |
-          cp backend files
+          cp -r backend files
       - name: Upload Package
         if: success()
         uses: actions/upload-artifact@v4
