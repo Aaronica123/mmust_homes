@@ -28,7 +28,7 @@ jobs:
            npm install
            npm run build
       - run: |
-         cp frontend/dist build
+         cp -r frontend/dist files
       - name: Build backend package
         working-directory: backend
         run: |
@@ -50,7 +50,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
            name: frontend_artifact
-           path: /files
+           path: files
            
   deploy:
    needs: build
