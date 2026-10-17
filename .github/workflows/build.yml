@@ -40,7 +40,7 @@ jobs:
          path: ./build_frontend
      - uses: Azure/static-web-apps-deploy@v1
        with:
-         azure_static_wwb_apps_api_token: ${{secrets.AZ_TOKEN}}
+         azure_static_wwb_apps_api_token: ${{ secrets.AZURE_TOKEN }}
          action: "upload"
          app_location: "./build_frontend"
          api_location: "" 
