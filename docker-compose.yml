@@ -8,6 +8,12 @@ services:
       - mmust_homes_networks
     env_file:
       - .env
+    healthcheck:
+      test: ["CMD", "curl","-f","http://localhost:3001"]
+      interval: 1m30s
+      timeout: 15s
+      retries: 5
+      start_period: 30s
   frontend_container:
     build: "/frontend"
     dockerfile: Dockerfile
@@ -17,6 +23,15 @@ services:
       - mmust_homes_networks
     env_file:
       - .env
+    depends_on:
+      - container_1:
+          condition: service_healthy
+    healthcheck:
+      test: ["CMD","curl","-f", "http://localhost:8001"]
+      interval: 1m30s
+      timeout: 15s
+      retries: 5
+      start_period: 30s
 
 networks:
   mmust_homes_networks:
