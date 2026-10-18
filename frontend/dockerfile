@@ -1,0 +1,10 @@
+FROM node:26-bookworm AS BUILD
+WORKDIR /
+COPY / /
+RUN "npm install"
+RUN "npm build"
+
+FROM nginx:latest AS WEBSERVER
+COPY --from=BUILD /dist /frontend_build
+COPY nginx.conf /etc/nginx/nginx.conf
+EXPOSE 8001:8001

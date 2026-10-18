@@ -1,0 +1,23 @@
+services:
+  container_1:
+    build: "./backend"
+    dockerfile: "Dockerfile"
+    ports:
+      - 3001:3001
+    networks:
+      - mmust_homes_networks
+    env_file:
+      - .env
+  frontend_container:
+    build: "/frontend"
+    dockerfile: Dockerfile
+    ports:
+      - 8001:8001
+    networks:
+      - mmust_homes_networks
+    env_file:
+      - .env
+
+networks:
+  mmust_homes_networks:
+    driver: "bridge"

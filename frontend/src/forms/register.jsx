@@ -453,7 +453,7 @@ console.log(towns.main,towns.sub)
     );
      try {
       console.log(Frm.get("body"));
-      const { data, status } = await axios_client.post("/api/register_house", Frm);
+      const { data, status } = await axios_client.post("/register_house", Frm);
       if (status === 200) {
         console.log("Successfully uploaded image", data);
       } else {
