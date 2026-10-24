@@ -6,6 +6,9 @@ on:
       - main
   workflow_dispatch:
 
+permissions: 
+  pull-requests: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -18,7 +21,7 @@ jobs:
           cd frontend
           npm install
       - name: upload artifact
-        uses: artifact/upload-artifact@v7
+        uses: actions/upload-artifact@v7
         with:  
             name: build
             path: frontend/
