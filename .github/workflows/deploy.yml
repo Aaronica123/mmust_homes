@@ -1,18 +1,1 @@
-name: Deploy 
 
-on: 
-  push:
-    branches:
-     main
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-        - uses: actions/download-artifact@v8
-          with:
-            name: build
-            path: .
-        - uses: JorgeLNJunior/render-deploy@v1.5.0
-          with:
-            service_id: ${{secrets.RENDER_SERVICE}}
-            api_key: ${{secrets.RENDER_API}}
