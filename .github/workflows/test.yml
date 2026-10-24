@@ -27,7 +27,7 @@ jobs:
             path: backend/
   deploy:
     needs: build
-    environment: development
+    # environment: development
     runs-on: ubuntu-latest
     steps:
         - uses: actions/download-artifact@v8
