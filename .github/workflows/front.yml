@@ -1,0 +1,37 @@
+name: Frontend Deployment
+
+on:
+  pull_request:
+      branches: 
+        - frontend
+
+jobs:
+  build_front:
+    runs-on: ubuntu-latest
+    steps:  
+      - uses: actions/checkout@v4
+      - name: build node
+        uses: actions/setup-node@v7
+      - name: install and build
+        run: |
+          cd frontend
+          npm install
+          npm build
+      - uses: actions/upload-artifact@v7
+        with:
+          name: frontend
+          path: frontend/dist/
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build_front
+    steps:
+      - uses: actions/download-artifact@v7
+        with:
+          name: frontend
+          path: .
+      - uses: JorgeLNJunior/render-deploy@v1.5.0
+        with:
+          service_id: ${{secrets.RENDER_FRONTEND_SERVICE}}
+          api_key: ${{secrets.RENDER_API}}
+    
+          
