@@ -3,7 +3,7 @@ name: Test File
 on:
   pull_request:
     branches: 
-      - main
+      - backend
   workflow_dispatch:
 
 permissions: 
