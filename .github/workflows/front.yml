@@ -16,7 +16,7 @@ jobs:
         run: |
           cd frontend
           npm install
-          npm build
+          npm run build
       - uses: actions/upload-artifact@v7
         with:
           name: frontend
@@ -31,7 +31,7 @@ jobs:
           path: .
       - uses: JorgeLNJunior/render-deploy@v1.5.0
         with:
-          service_id: ${{secrets.RENDER_FRONTEND_SERVICE}}
+          service_id: ${{secrets.RENDER_FRONT_SERVICE}}
           api_key: ${{secrets.RENDER_API}}
     
           
