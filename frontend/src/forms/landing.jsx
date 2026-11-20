@@ -7,6 +7,7 @@ import im2 from "./images/im2.png";
 import im3 from "./images/im3.png";
 import im4 from "./images/im4.png";
 import profile from "./images/profile.png"
+import { useNavigate } from "react-router-dom";
 import {
   Carousel,
   CarouselContent,
@@ -15,6 +16,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel"
 export default  function Landing(){
+  const nav=useNavigate();
     const min=useMediaQuery({maxWidth:"768px"})
     const [filter,setfilter]=useState({all:false,bedsitter:false,single:false,apartment:false})
     
@@ -192,7 +194,7 @@ console.log(listings[0].image)
    </Text>
   </div>
   
-   <button style={{width:"200px",padding:"2px", background:"#FFFFFF",borderRadius:"8px"}}>
+   <button style={{width:"200px",padding:"2px", background:"#FFFFFF",borderRadius:"8px"}} onClick={()=>nav("/login")}>
     <Text weight={"medium"} size={"5"} style={{gap:"10px",color:"#99462a",fontFamily: 'Plus Jakarta Sans',display:"flex",flexDirection:"row",alignItems:"center",justifyContent:"center"}}>
     Login <ArrowRight></ArrowRight>
     </Text>
