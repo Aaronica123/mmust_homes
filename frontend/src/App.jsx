@@ -11,11 +11,13 @@ import { Auth } from "./auth/auth";
 import Create_user from "./forms/create";
 import Landing from "./forms/landing";
 import N from "./forms/new";
+import { Toaster } from "@/components/ui/sonner"
 function App() {
 
 
   return (
     <Theme>
+    <Toaster />
     <Router>
       <Routes>
         <Route path="/register" element={
