@@ -1,167 +1,20 @@
-import { Button, TextField } from "@radix-ui/themes";
+import { Blockquote, Button, Card, Quote, TextField } from "@radix-ui/themes";
 import { client } from "../axios/supabase.js";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import house from "../assets/image_house_1.png";
- 
-const styles = `
-.hf-page {
-  --hf-900: #0f3d24;
-  --hf-700: #166534;
-  --hf-600: #15803d;
-  --hf-500: #16a34a;
-  --hf-100: #dcfce7;
-  --hf-50: #f0fdf4;
-  --hf-ink: #10251a;
-  --hf-muted: #5b6f63;
-  height: 100dvh;
-  width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  overflow: hidden;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  color: var(--hf-ink);
-}
- 
-/* ---------- Form side ---------- */
-.hf-form-side {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  background:
-    radial-gradient(circle at 15% 10%, var(--hf-100) 0, transparent 45%),
-    var(--hf-50);
-  overflow-y: auto;
-}
-.hf-card {
-  width: 100%;
-  max-width: 420px;
-  background: #fff;
-  border: 1px solid #d7ecdd;
-  border-top: 4px solid var(--hf-600);
-  border-radius: 16px;
-  padding: 36px 32px 30px;
-  box-shadow: 0 18px 40px -18px rgba(15, 61, 36, 0.35);
-}
-.hf-title {
-  margin: 0 0 6px;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 30px;
-  font-weight: 700;
-  line-height: 1.15;
-  color: var(--hf-900);
-}
-.hf-sub {
-  margin: 0 0 26px;
-  font-size: 15px;
-  color: var(--hf-muted);
-}
-.hf-field { margin-bottom: 18px; }
-.hf-label {
-  display: block;
-  margin-bottom: 7px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--hf-900);
-}
-.hf-input {
-  width: 100%;
-  background: #fbfefc;
-  box-shadow: inset 0 0 0 1.5px #c6dfce;
-  border-radius: 10px;
-  transition: box-shadow 0.15s ease, background 0.15s ease;
-}
-.hf-input input {
-  font-size: 16px;
-  color: var(--hf-ink);
-}
-.hf-input input::placeholder { color: #8ea496; }
-.hf-input:hover { box-shadow: inset 0 0 0 1.5px #8fc4a0; }
-.hf-input:focus-within {
-  outline: none;
-  background: #fff;
-  box-shadow: inset 0 0 0 2px var(--hf-500), 0 0 0 4px rgba(22, 163, 74, 0.18);
-}
-.hf-toggle {
-  background: none;
-  border: none;
-  padding: 0 4px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--hf-700);
-  cursor: pointer;
-}
-.hf-toggle:hover { text-decoration: underline; }
-.hf-toggle:focus-visible { outline: 2px solid var(--hf-500); border-radius: 4px; }
-.hf-error {
-  margin: 0 0 14px;
-  padding: 10px 12px;
-  font-size: 14px;
-  color: #991b1b;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  border-radius: 8px;
-}
-.hf-actions { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
-.hf-actions button { width: 100%; height: 44px; font-size: 15px; font-weight: 600; cursor: pointer; }
-.hf-divider {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 13px;
-  color: var(--hf-muted);
-}
-.hf-divider::before, .hf-divider::after { content: ""; flex: 1; height: 1px; background: #d7ecdd; }
- 
-/* ---------- Image side ---------- */
-.hf-hero {
-  position: relative;
-  display: flex;
-  align-items: flex-end;
-  padding: 48px;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  overflow: hidden;
-}
-.hf-hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(15, 61, 36, 0.25) 0%, rgba(15, 61, 36, 0.92) 100%);
-}
-.hf-hero-text { position: relative; max-width: 440px; color: #fff; }
-.hf-hero-text h2 {
-  margin: 0 0 12px;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 38px;
-  line-height: 1.12;
-  font-weight: 700;
-}
-.hf-hero-text p {
-  margin: 0;
-  font-size: 17px;
-  line-height: 1.55;
-  color: #d8f3e1;
-}
- 
-@media (max-width: 860px) {
-  .hf-page { grid-template-columns: 1fr; }
-  .hf-hero { display: none; }
-}
-@media (max-width: 420px) {
-  .hf-card { padding: 28px 20px 24px; }
-}
-`;
- 
+import { useMediaQuery } from "react-responsive";
+import profile from "./images/profile.png";
+import { Eye, EyeClosed, House, Lock, Mail } from "lucide-react";
+import { Avatar,Text } from "@radix-ui/themes";
+import im4 from "./images/im4.png";
 export default function Login() {
   const [form, setform] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const nav = useNavigate();
- 
+  const min=useMediaQuery({maxWidth:"768px"})
   const change = (e) => {
     const { name, value } = e.target;
     setform((data) => ({ ...data, [name]: value }));
@@ -189,21 +42,39 @@ export default function Login() {
  
   return (
     <>
-      <style>{styles}</style>
-      <div className="hf-page">
-        {/* Left: login card */}
-        <div className="hf-form-side">
-          <form className="hf-card" onSubmit={login}>
-            <h1 className="hf-title">Welcome back</h1>
-            <p className="hf-sub">Sign in to continue your house hunt.</p>
- 
-            {error && <p className="hf-error" role="alert">{error}</p>}
- 
-            <div className="hf-field">
-              <label className="hf-label" htmlFor="email">Email</label>
+      <div style={{display:"flex",flexDirection:"column",height:"100%",background:"#F7F5F0"}}>
+        <div style={{width:"100%",height:"fit-content",display:"flex",flexDirection:"row",padding:"15px",
+                background:"#FFFFFF",justifyContent:"center",alignItems:"center"}}>
+                <div style={{width:"100%",height:"100%",display:"flex",gap:"5px",alignItems:"center"}}>
+                <div style={{display:"flex",width:"fit-content",height:"fit-content",padding:'5px',background:"#2B3437",borderRadius:"10px"}}
+                ><House size={"30"} color="#ffffff"></House>    
+                </div>
+                <Text size={"6"} weight={"medium"} style={{fontFamily:"Plus Jakarta Sans",color:"#2B3437"}}>
+                    Mmust Homes
+                </Text>
+                </div>
+                <div style={{width:"fit-content",height:"100%",display:"flex",alignItems:"center"}}>
+                <Avatar size={"3"} variant="soft" src={profile} radius="full"></Avatar>
+                </div>
+            </div>
+        <div>
+          <form className="hf-card" onSubmit={login} style={{width:"100%",height:"100%",padding:"15px"}}>
+            <div style={{width:"100%",height:"fit-content",display:"flex",flexDirection:"column"}}>
+            <Text size={"7"} weight={"regular"} style={{fontFamily:"Plus Jakarta Sans",color:"#2B3437"}}>
+                        Welcome back
+                    </Text>
+                    <Text size={"2"} weight={"light"} style={{fontFamily:"Plus Jakarta Sans",color:"#434749"}}>
+                        Login or Create an account to search for your affordable house rental  
+                    </Text>
+            </div>
+            <div style={{display:"flex",flexDirection:"column",gap:"5px",height:"100%",justifyContent:"center"}}>
+            <div style={{display:"flex",flexDirection:"column",gap:"5px"}}>
+               <Text size={"3"} weight={"light"} style={{fontFamily:"Plus Jakarta Sans",color:"#434749"}}>
+                Email
+                </Text> 
               <TextField.Root
                 id="email"
-                className="hf-input"
+                style={{width:"100%",padding:"5px",color:"#2B3437"}}
                 size="3"
                 name="email"
                 type="email"
@@ -211,12 +82,19 @@ export default function Login() {
                 required
                 value={form.email}
                 onChange={change}
-                placeholder="you@example.com"
-              />
+                placeholder={""}
+                
+              >
+                <TextField.Slot>
+                  <Mail></Mail>
+                </TextField.Slot>
+              </TextField.Root>
             </div>
  
-            <div className="hf-field">
-              <label className="hf-label" htmlFor="password">Password</label>
+            <div style={{display:"flex",flexDirection:"column",gap:"5px"}}>
+               <Text size={"3"} weight={"light"} style={{fontFamily:"Plus Jakarta Sans",color:"#434749"}}>
+                Password
+                </Text> 
               <TextField.Root
                 id="password"
                 className="hf-input"
@@ -229,32 +107,89 @@ export default function Login() {
                 onChange={change}
                 placeholder="Enter your password"
               >
+                <TextField.Slot><Lock></Lock></TextField.Slot>
                 <TextField.Slot side="right">
                   <button
                     type="button"
                     className="hf-toggle"
                     onClick={() => setShowPassword((s) => !s)}
                   >
-                    {showPassword ? "Hide" : "Show"}
+                    
+                    
+                    {showPassword ?<Eye></Eye> : <EyeClosed></EyeClosed>}
                   </button>
                 </TextField.Slot>
               </TextField.Root>
             </div>
- 
-            <div className="hf-actions">
-              <Button type="submit" color="green" variant="solid" size="3" loading={loading}>
-                Log in
-              </Button>
-              <div className="hf-divider">New here?</div>
-              <Button type="button" color="green" variant="outline" size="3" onClick={move}>
-                Create an account
-              </Button>
+            <div style={{display:"flex",flexDirection:"column",gap:"8px",marginTop:"15px"}}>
+              <button type="submit"  style={{width:"100%",height:"fit-content",background:"#2B3437",padding:"5px",borderRadius:"8px"}}>
+                <Text size={"5"} weight={"medium"} style={{fontFamily:"Plus Jakarta Sans",color:"#FFFFFF"}}>
+                  Log in
+                  </Text> 
+              </button>
+              <div style={{display:"flex",flexDirection:"row"}}>
+                <Text size={"3"} weight={"medium"} style={{fontFamily:"Plus Jakarta Sans",color:"#2B3437"}}>
+                  New here?
+                  </Text> 
+              <Text size={"3"} weight={"medium"} style={{marginLeft:"5px",cursor:"pointer",fontFamily:"Plus Jakarta Sans",color:"#99462a"}} onClick={move}>
+                  Create an account
+              </Text> 
+              </div>
             </div>
+
+<Card style={{
+  overflow: "hidden",
+  width: "100%",
+  height: "fit-content",
+  gap: "15px",
+  display: 'flex',
+  flexDirection: "column",
+  marginTop: "20px",
+  background: "#FFFFFF",
+  padding: "10px",
+  borderRadius: "10px",
+  position: "relative", // needed for absolute children
+}}>
+  <div style={{ position: "relative", width: "100%" }}>
+    <img
+      style={{ width: "100%", objectFit: "cover", borderRadius: "8px", display: "block" }}
+      src={im4}
+    />
+    {/* Fade overlay */}
+    <div style={{
+      position: "absolute",
+      left: 0,
+      right: 0,
+      bottom: 0,
+      height: "80%", // adjust fade height
+      background: "linear-gradient(to top, #FFFFFF 0%, rgba(255,255,255,0.8) 40%, rgba(255,255,255,0) 100%)",
+      pointerEvents: "none",
+    }} />
+  </div>
+
+  <div style={{
+    width: "fit-content",
+    height: "fit-content",
+    display: "flex",
+    zIndex: 3,
+    position: "absolute",
+    bottom: "-1px",
+    padding:"8px",flexDirection:"column"
+  }}>
+    <Text size={"4"} weight={"medium"} style={{ color: "#99462a", fontFamily: 'Plus Jakarta Sans' }}>
+ <Quote style={{color:"#2B3437",marginRight:"8px"}}>This app has helped me find a house I highly recommend to any house finder out there</Quote>
+  System Developer
+  </Text>
+  </div>
+</Card>
+            </div>
+ 
+            
           </form>
         </div>
  
         {/* Right: image + message */}
-        <div className="hf-hero" style={{ backgroundImage: `url(${house})` }}>
+        {/* <div className="hf-hero" style={{ backgroundImage: `url(${house})` }}>
           <div className="hf-hero-text">
             <h2>Your next home is closer than you think.</h2>
             <p>
@@ -262,7 +197,7 @@ export default function Login() {
               you love, all in one spot.
             </p>
           </div>
-        </div>
+        </div> */}
       </div>
     </>
   );
