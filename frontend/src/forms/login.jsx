@@ -5,9 +5,10 @@ import { useNavigate } from "react-router-dom";
 import house from "../assets/image_house_1.png";
 import { useMediaQuery } from "react-responsive";
 import profile from "./images/profile.png";
-import { Eye, EyeClosed, House, Lock, Mail } from "lucide-react";
+import { Check, Eye, EyeClosed, House, Loader, Lock, Mail, XCircle } from "lucide-react";
 import { Avatar,Text } from "@radix-ui/themes";
 import im4 from "./images/im4.png";
+import {toast} from "sonner"
 export default function Login() {
   const [form, setform] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
@@ -21,6 +22,17 @@ export default function Login() {
   };
  
   const login = async (e) => {
+    const id=toast(
+  <div style={{display:"flex",flexDirection:"row",alignItems:"center", gap:"10px",}}>
+  <Loader></Loader>       
+  <div style={{width:"fit-content",display:"flex",flexDirection:"column"}}>
+  Logging In
+  <Text size={"2"} weight={"medium"} style={{fontFamily:"Plus Jakarta Sans",color:"#2B3437"}}>
+                   Authenticating please wait
+                </Text>
+  </div>
+  </div>,{position:"top-right",action:{label:"Close",onClick:()=>{}},actionButtonStyle:{background:"#D6C9C0",color:"#742C38",},style:{background:"#FAF9F6",border:"1px solid #DEDAD4"}});
+ 
     e.preventDefault();
     setError("");
     setLoading(true);
@@ -29,10 +41,34 @@ export default function Login() {
       password: form.password,
     });
     setLoading(false);
- 
+    
     if (data?.user) {
+      toast.dismiss(id)
+      toast(
+  <div style={{display:"flex",flexDirection:"row",alignItems:"center", gap:"10px",}}>
+    <Check></Check>      
+  <div style={{width:"fit-content",display:"flex",flexDirection:"column"}}>
+  Login Success
+  <Text size={"2"} weight={"medium"} style={{fontFamily:"Plus Jakarta Sans",color:"#2B3437"}}>
+                Login was successfull
+                </Text>
+  </div>
+  </div>,{position:"top-right",action:{label:"Close",onClick:()=>{}},actionButtonStyle:{background:"#D6C9C0",color:"#742C38",},style:{background:"#FAF9F6",border:"1px solid #DEDAD4"}});
+ 
       nav("/houses");
     } else {
+      toast.dismiss(id)
+      toast(
+  <div style={{display:"flex",flexDirection:"row",alignItems:"center", gap:"10px",}}>
+    <XCircle></XCircle>      
+  <div style={{width:"fit-content",display:"flex",flexDirection:"column"}}>
+  Login Failed
+  <Text size={"2"} weight={"medium"} style={{fontFamily:"Plus Jakarta Sans",color:"#2B3437"}}>
+                We couldn't sign you in. Check your email and password and try again.
+                </Text>
+  </div>
+  </div>,{position:"top-right",action:{label:"Close",onClick:()=>{}},actionButtonStyle:{background:"#D6C9C0",color:"#742C38",},style:{background:"#FAF9F6",border:"1px solid #DEDAD4"}});
+ 
       console.log(error);
       setError("We couldn't sign you in. Check your email and password and try again.");
     }
