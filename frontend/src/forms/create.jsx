@@ -1,156 +1,10 @@
-import { Button, TextField } from "@radix-ui/themes";
+import { Button, DropdownMenu, TextField } from "@radix-ui/themes";
 import { useState } from "react";
 import axios_client from "../axios/axios";
 import { useNavigate } from "react-router-dom";
- 
-const styles = `
-.hf-page {
-  --hf-900: #0f3d24;
-  --hf-700: #166534;
-  --hf-600: #15803d;
-  --hf-500: #16a34a;
-  --hf-100: #dcfce7;
-  --hf-50: #f0fdf4;
-  --hf-ink: #10251a;
-  --hf-muted: #5b6f63;
-  min-height: 100dvh;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 24px;
-  box-sizing: border-box;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  color: var(--hf-ink);
-  background:
-    radial-gradient(circle at 10% 8%, var(--hf-100) 0, transparent 42%),
-    radial-gradient(circle at 92% 95%, var(--hf-100) 0, transparent 38%),
-    var(--hf-50);
-}
-.hf-card {
-  width: 100%;
-  max-width: 580px;
-  background: #fff;
-  border: 1px solid #d7ecdd;
-  border-top: 4px solid var(--hf-600);
-  border-radius: 16px;
-  padding: 44px 44px 36px;
-  box-sizing: border-box;
-  box-shadow: 0 18px 40px -18px rgba(15, 61, 36, 0.35);
-}
-.hf-title {
-  margin: 0 0 6px;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 32px;
-  font-weight: 700;
-  line-height: 1.15;
-  color: var(--hf-900);
-}
-.hf-sub {
-  margin: 0 0 30px;
-  font-size: 15px;
-  line-height: 1.5;
-  color: var(--hf-muted);
-}
-.hf-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px 18px;
-}
-.hf-full { grid-column: 1 / -1; }
-.hf-label {
-  display: block;
-  margin-bottom: 7px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--hf-900);
-}
-.hf-input {
-  width: 100%;
-  background: #fbfefc;
-  box-shadow: inset 0 0 0 1.5px #c6dfce;
-  border-radius: 10px;
-  transition: box-shadow 0.15s ease, background 0.15s ease;
-}
-.hf-input input { font-size: 16px; color: var(--hf-ink); }
-.hf-input input::placeholder { color: #8ea496; }
-.hf-input:hover { box-shadow: inset 0 0 0 1.5px #8fc4a0; }
-.hf-input:focus-within {
-  outline: none;
-  background: #fff;
-  box-shadow: inset 0 0 0 2px var(--hf-500), 0 0 0 4px rgba(22, 163, 74, 0.18);
-}
-.hf-select {
-  width: 100%;
-  height: var(--space-7, 44px);
-  min-height: 44px;
-  padding: 0 40px 0 12px;
-  font: inherit;
-  font-size: 16px;
-  color: var(--hf-ink);
-  background: #fbfefc url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23166534' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 14px center;
-  border: none;
-  border-radius: 10px;
-  box-shadow: inset 0 0 0 1.5px #c6dfce;
-  appearance: none;
-  cursor: pointer;
-  transition: box-shadow 0.15s ease, background-color 0.15s ease;
-}
-.hf-select:hover { box-shadow: inset 0 0 0 1.5px #8fc4a0; }
-.hf-select:focus {
-  outline: none;
-  background-color: #fff;
-  box-shadow: inset 0 0 0 2px var(--hf-500), 0 0 0 4px rgba(22, 163, 74, 0.18);
-}
-.hf-select:invalid { color: #8ea496; }
-.hf-select option { color: var(--hf-ink); }
-.hf-toggle {
-  background: none;
-  border: none;
-  padding: 0 4px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--hf-700);
-  cursor: pointer;
-}
-.hf-toggle:hover { text-decoration: underline; }
-.hf-toggle:focus-visible { outline: 2px solid var(--hf-500); border-radius: 4px; }
-.hf-error {
-  margin: 0 0 20px;
-  padding: 10px 12px;
-  font-size: 14px;
-  color: #991b1b;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  border-radius: 8px;
-}
-.hf-actions { margin-top: 30px; }
-.hf-actions button { width: 100%; height: 46px; font-size: 15px; font-weight: 600; cursor: pointer; }
-.hf-foot {
-  margin: 22px 0 0;
-  text-align: center;
-  font-size: 14px;
-  color: var(--hf-muted);
-}
-.hf-link {
-  background: none;
-  border: none;
-  padding: 0;
-  font: inherit;
-  font-weight: 600;
-  color: var(--hf-700);
-  cursor: pointer;
-}
-.hf-link:hover { text-decoration: underline; }
-.hf-link:focus-visible { outline: 2px solid var(--hf-500); border-radius: 4px; }
- 
-@media (max-width: 560px) {
-  .hf-page { padding: 20px 14px; }
-  .hf-card { padding: 30px 22px 26px; }
-  .hf-grid { grid-template-columns: 1fr; }
-}
-`;
- 
+import { Eye, EyeClosed, House, IdCard, Lock, Mail, User } from "lucide-react";
+import { Avatar,Text } from "@radix-ui/themes";
+import profile from "./images/profile.png";
 export default function Create_user() {
   const [form, setform] = useState({
     user_id: "",
@@ -202,23 +56,42 @@ export default function Create_user() {
  
   return (
     <>
-      <style>{styles}</style>
-      <div className="hf-page">
-        <form className="hf-card" onSubmit={create}>
-          <h1 className="hf-title">Create your account</h1>
-          <p className="hf-sub">
-            Join to find a home you love, or to list your property for people
-            who are looking.
-          </p>
+      
+      <div style={{width:"100%",display:"flex",flexDirection:"column",height:"100%",background:"#F7F5F0"}}>
+        <div style={{width:"100%",height:"fit-content",display:"flex",flexDirection:"row",padding:"15px",
+                background:"#FFFFFF",justifyContent:"center",alignItems:"center"}}>
+                <div style={{width:"100%",height:"100%",display:"flex",gap:"5px",alignItems:"center"}}>
+                <div style={{display:"flex",width:"fit-content",height:"fit-content",padding:'5px',background:"#2B3437",borderRadius:"10px"}}
+                ><House size={"30"} color="#ffffff"></House>    
+                </div>
+                <Text size={"6"} weight={"medium"} style={{fontFamily:"Plus Jakarta Sans",color:"#2B3437"}}>
+                    Mmust Homes
+                </Text>
+                </div>
+                <div style={{width:"fit-content",height:"100%",display:"flex",alignItems:"center"}}>
+                <Avatar size={"3"} variant="soft" src={profile} radius="full"></Avatar>
+                </div>
+            </div>
+        <form onSubmit={create} style={{background:"#F7F5F0",width:"100%",height:"100%",padding:"15px",marginTop:"5px"}}>
+          <div style={{width:"100%",height:"fit-content",display:"flex",flexDirection:"column"}}>
+            <Text size={"7"} weight={"regular"} style={{fontFamily:"Plus Jakarta Sans",color:"#2B3437"}}>
+                        Welcome back
+                    </Text>
+                    <Text size={"2"} weight={"light"} style={{fontFamily:"Plus Jakarta Sans",color:"#434749"}}>
+                        Create an account to search for your affordable house rental  
+                    </Text>
+            </div>
  
-          {error && <p className="hf-error" role="alert">{error}</p>}
+          
  
-          <div className="hf-grid">
+          <div style={{width:"100%",height:"fit-content",display:"flex",flexDirection:"column",gap:'10px',marginTop:"8px"}}>
             <div>
-              <label className="hf-label" htmlFor="first_name">First name</label>
+              <Text size={"3"} weight={"light"} style={{fontFamily:"Plus Jakarta Sans",color:"#434749"}}>
+                First Name
+                </Text> 
               <TextField.Root
                 id="first_name"
-                className="hf-input"
+                style={{width:"100%",padding:"5px",color:"#2B3437"}}
                 size="3"
                 name="first_name"
                 type="text"
@@ -227,14 +100,20 @@ export default function Create_user() {
                 value={form.first_name}
                 onChange={changeform}
                 placeholder="Jane"
-              />
+              >
+                <TextField.Slot>
+                <User></User>
+                </TextField.Slot>
+              </TextField.Root>
             </div>
  
             <div>
-              <label className="hf-label" htmlFor="last_name">Last name</label>
+              <Text size={"3"} weight={"light"} style={{fontFamily:"Plus Jakarta Sans",color:"#434749"}}>
+               Last Name
+                </Text> 
               <TextField.Root
                 id="last_name"
-                className="hf-input"
+                style={{width:"100%",padding:"5px",color:"#2B3437"}}
                 size="3"
                 name="last_name"
                 type="text"
@@ -243,14 +122,20 @@ export default function Create_user() {
                 value={form.last_name}
                 onChange={changeform}
                 placeholder="Doe"
-              />
+              >
+                <TextField.Slot>
+                <User></User>
+                </TextField.Slot>
+              </TextField.Root>
             </div>
  
             <div className="hf-full">
-              <label className="hf-label" htmlFor="user_email">Email</label>
+              <Text size={"3"} weight={"light"} style={{fontFamily:"Plus Jakarta Sans",color:"#434749"}}>
+               Email
+                </Text> 
               <TextField.Root
                 id="user_email"
-                className="hf-input"
+                style={{width:"100%",padding:"5px",color:"#2B3437"}}
                 size="3"
                 name="user_email"
                 type="email"
@@ -259,14 +144,20 @@ export default function Create_user() {
                 value={form.user_email}
                 onChange={changeform}
                 placeholder="you@example.com"
-              />
+              >
+                <TextField.Slot>
+                <Mail></Mail>
+                </TextField.Slot>
+              </TextField.Root>
             </div>
  
             <div>
-              <label className="hf-label" htmlFor="user_id">User ID</label>
+              <Text size={"3"} weight={"light"} style={{fontFamily:"Plus Jakarta Sans",color:"#434749"}}>
+                National ID
+                </Text> 
               <TextField.Root
                 id="user_id"
-                className="hf-input"
+                style={{width:"100%",padding:"5px",color:"#2B3437"}}
                 size="3"
                 name="user_id"
                 type="number"
@@ -274,14 +165,21 @@ export default function Create_user() {
                 value={form.user_id}
                 onChange={changeform}
                 placeholder="Enter your ID number"
-              />
+              >,
+              <TextField.Slot>
+                <IdCard></IdCard>
+                </TextField.Slot>
+              </TextField.Root>
             </div>
  
-            <div>
-              <label className="hf-label" htmlFor="user_role">I am a</label>
-              <select
+            <div style={{display:"flex",flexDirection:"column",width:"100%"
+            }}>
+              <Text size={"3"} weight={"light"} style={{fontFamily:"Plus Jakarta Sans",color:"#434749"}}>
+                Role
+                </Text>
+              <select 
                 id="user_role"
-                className="hf-select"
+                style={{border:"solid 1px #c1c1c1",borderRadius:"5px",padding:"5px",background:"#FFFFFF"}}
                 name="user_role"
                 required
                 value={form.user_role}
@@ -294,10 +192,12 @@ export default function Create_user() {
             </div>
  
             <div className="hf-full">
-              <label className="hf-label" htmlFor="password">Password</label>
+              <Text size={"3"} weight={"light"} style={{fontFamily:"Plus Jakarta Sans",color:"#434749"}}>
+                Password
+                </Text>
               <TextField.Root
                 id="password"
-                className="hf-input"
+                style={{width:"100%",padding:"5px",color:"#2B3437"}}
                 size="3"
                 name="password"
                 type={showPassword ? "text" : "password"}
@@ -307,31 +207,41 @@ export default function Create_user() {
                 onChange={changeform}
                 placeholder="Create a password"
               >
+                <TextField.Slot>
+                  <Lock></Lock>
+                </TextField.Slot>
                 <TextField.Slot side="right">
                   <button
                     type="button"
                     className="hf-toggle"
                     onClick={() => setShowPassword((s) => !s)}
                   >
-                    {showPassword ? "Hide" : "Show"}
+                    {showPassword ? <Eye></Eye> : <EyeClosed></EyeClosed>}
                   </button>
                 </TextField.Slot>
               </TextField.Root>
             </div>
-          </div>
- 
-          <div className="hf-actions">
-            <Button type="submit" color="green" variant="solid" size="3" loading={loading}>
-              Create account
-            </Button>
-          </div>
- 
-          <p className="hf-foot">
-            Already have an account?{" "}
-            <button type="button" className="hf-link" onClick={() => nav("/")}>
-              Log in
+          <div style={{width:"100%",display:"flex",flexDirection:"column",marginTop:"10px",gap:"5px"}}>
+            
+            <button type="submit" style={{width:"100%",height:"fit-content",background:"#2B3437",padding:"5px",borderRadius:"8px"}}>
+             <Text size={"5"} weight={"medium"} style={{fontFamily:"Plus Jakarta Sans",color:"#FFFFFF"}}>
+                  Create Account
+                  </Text> 
             </button>
-          </p>
+          
+ 
+          <div style={{display:"flex",flexDirection:"row"}}>
+                <Text size={"3"} weight={"medium"} style={{fontFamily:"Plus Jakarta Sans",color:"#2B3437"}}>
+                  Already have an acount?
+                  </Text> 
+              <Text size={"3"} weight={"medium"} style={{marginLeft:"5px",cursor:"pointer",fontFamily:"Plus Jakarta Sans",color:"#99462a"}} onClick={()=>nav('/login')}>
+                  Login
+              </Text> 
+          </div>
+          </div>  
+        </div>
+ 
+          
         </form>
       </div>
     </>
