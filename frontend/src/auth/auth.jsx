@@ -12,19 +12,9 @@ export function Auth({children}){
         const{data:da,error:er}=await client.auth.getUser();
         if(da.user){
             console.log(da.user.email)
-            const {data,error}=await client.schema("mmust_homes").from("users").select("user_id,user_role").match({user_email:da.user.email});
-            console.log(data);
-            console.log(error)
-            if(data){
-                console.log(data)
-                setuser({user_id:data[0].user_id,user_role:data[0].user_role})
-                setloading(false);
-            }
-            else{
-                console.log(error);
-                seterror(true);
-                setloading(false)
-            }
+            setuser({user_id:da.user.user_metadata.user_id,user_role:da.user.user_metadata.role})
+              seterror(false);
+            setloading(false);
         }
         else{
             console.log(er);
