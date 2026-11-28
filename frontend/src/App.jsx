@@ -12,6 +12,7 @@ import Create_user from "./forms/create";
 import Landing from "./forms/landing";
 import N from "./forms/new";
 import { Toaster } from "@/components/ui/sonner"
+import Register from "./rooms/register_rooms";
 function App() {
 
 
@@ -20,6 +21,7 @@ function App() {
     <Toaster />
     <Router>
       <Routes>
+        <Route path="/reg" element={<Register/>}/>
         <Route path="/register" element={
           <Auth>
           <NavBar>
