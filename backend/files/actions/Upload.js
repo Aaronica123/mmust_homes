@@ -30,7 +30,7 @@ export default async function UploadImage(req,res){
         const date=new Date().toLocaleTimeString('en-Us',{second:"2-digit",minute:"numeric",hourCycle:"h24",hour:"numeric"})
         console.log(date)
         const pin = Math.floor(100000 + Math.random() * 900000).toString();
-        const pass=`${data.user_metadata.staff_id}/${date}/${pin}`
+        const pass=`${data.user_metadata.user_id}/${date}/${pin}`
         console.log(pass)
         const path = await min_client.presignedPutObject('mmustimages', pass, 3600)
         
